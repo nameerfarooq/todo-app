@@ -1,24 +1,34 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { FaPlus } from "react-icons/fa6";
 import TodoItem from "./components/TodoItem";
 
 const TodoApp = () => {
   //states
-  const [todoItems, settodoItems] = useState([
-    "Breakfast",
-    "lunch",
-    "dinner",
-    "todo 4",
-    "todo 5",
-  ]);
+  const [todoItems, settodoItems] = useState([]);
   const [newTodo, setnewTodo] = useState("");
 
   //funtions
 
   const addTodo = () => {
     // todoItems.push(newTodo)
-    const newArray = [newTodo, ...todoItems];
+
+    //creating an object for todo item
+
+    const myNewTodo = {
+      id: new Date().getTime(),
+      title: newTodo,
+      completed: false,
+    };
+
+    const newArray = [myNewTodo, ...todoItems];
     settodoItems(newArray);
+  };
+
+  const markTodoAsCompleted = (todoId) => {
+    console.log("i got this todo : ", todoId);
+
+    const editThisTodo = todoItems.filter((item) => item.id === todoId);
+    console.log(editThisTodo);
   };
 
   return (
@@ -46,7 +56,11 @@ const TodoApp = () => {
         </div>
         <div className="flex flex-col gap-[5px] max-h-[40vh] overflow-auto">
           {todoItems.map((item, index) => (
-            <TodoItem title={item} key={index} />
+            <TodoItem
+              todoItem={item}
+              key={index}
+              markTodoAsCompleted={markTodoAsCompleted}
+            />
           ))}
         </div>
       </div>
