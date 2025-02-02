@@ -10,26 +10,51 @@ const TodoApp = () => {
   //funtions
 
   const addTodo = () => {
-    // todoItems.push(newTodo)
-
-    //creating an object for todo item
-
     const myNewTodo = {
       id: new Date().getTime(),
       title: newTodo,
       completed: false,
     };
-
     const newArray = [myNewTodo, ...todoItems];
     settodoItems(newArray);
+    setnewTodo("");
   };
 
   const markTodoAsCompleted = (todoId) => {
     console.log("i got this todo : ", todoId);
-
-    const editThisTodo = todoItems.filter((item) => item.id === todoId);
-    console.log(editThisTodo);
+    const editedArr = todoItems.map((item) => {
+      if (item.id === todoId) {
+        return {
+          id: item.id,
+          title: item.title,
+          completed: !item.completed,
+        };
+      } else {
+        return item;
+      }
+    });
+    settodoItems(editedArr);
   };
+
+  const deleteThisTodo = (todoId) => {
+    const filteredArray = todoItems.filter((item) => item.id != todoId);
+    settodoItems(filteredArray);
+  };
+
+  const setTodosInLocalStorage = () => {
+    const myTodos = JSON.stringify(todoItems);
+    localStorage.setItem("todoList", myTodos);
+  };
+
+  useEffect(() => {
+    const localStorageItems = localStorage.getItem("todoList");
+    const localStorageItemsParsed = JSON.parse(localStorageItems);
+    settodoItems(localStorageItemsParsed);
+  }, []);
+
+  useEffect(() => {
+    setTodosInLocalStorage();
+  }, [todoItems]);
 
   return (
     <div className="h-screen w-screen bg-amber-200 flex items-center justify-center">
@@ -60,6 +85,7 @@ const TodoApp = () => {
               todoItem={item}
               key={index}
               markTodoAsCompleted={markTodoAsCompleted}
+              deleteThisTodo={deleteThisTodo}
             />
           ))}
         </div>
